@@ -56,7 +56,7 @@
               <fieldset class="form-group">
                 <label class="form-label semibold" for="detalle_descripcion_ticket_usuario">Descripción</label>
                 <div class="summernote-theme-5">
-                    <textarea id="detalle_descripcion_ticket_usuario" name="detalle_descripcion_ticket_usuario" class="summernote" name="name">Ingresa aqui la descripcion</textarea>
+                    <textarea id="detalle_descripcion_ticket_usuario" name="detalle_descripcion_ticket_usuario" class="summernote" name="name"></textarea>
                   </div>
               </fieldset>
             </div>
@@ -68,7 +68,7 @@
         </section>
 
        
-        <div class="box-typical box-typical-padding">
+        <div class="box-typical box-typical-padding" id="panel_detalle">
           <h5 class="m-t-lg with-border">Ingresar Información</h5>
           <div class="row">
            
@@ -82,43 +82,16 @@
                 </fieldset>
               </div>
               <div class="col-lg-12">
-                <button type="submit" name="action" value="add" class="btn btn-rounded btn-inline btn-primary">Enviar</button>
-                <button type="submit" name="action" value="add" class="btn btn-rounded btn-inline btn-danger">Cerrar Ticket</button>
+                <button type="button"  id="btnenviar" class="btn btn-rounded btn-inline btn-primary">Enviar</button>
+                <button type="button"  id="btncerrar" class="btn btn-rounded btn-inline btn-danger">Cerrar Ticket</button>
               </div>
             </form>
           </div>
         </div>
 
-<?php
-require_once("../../config/conexion.php");
-if (isset($_SESSION["id_usuario"])) {
-?>
-  <!DOCTYPE html>
-  <html>
-  <?php require_once("../MainHead/head.php"); ?>
-  <title>Detalle del ticket</title>
-  </head>
-  <body class="with-side-menu">
 
-    <?php require_once("../MainHeader/header.php"); ?>
-    <div class="mobile-menu-left-overlay"></div>
-    <?php require_once("../MainNav/nav.php"); ?>
+  
 
-    <div class="page-content">
-      <div class="container-fluid">
-        <section class="activity-line" id="detalleDelTicket">
-        </section>
-<?php
-    require_once("../MainJavaScript/javascript.php");
-?>
-    <script type="text/javascript" src="detalleticket.js"></script>
-  </body>
-  </html>
-<?php
-} else {
-  header("Location:" . Conectar::ruta() . "index.php");
-}
-?>
 
         </div>
     </div>

@@ -6,6 +6,7 @@ function init(){
 
 $(document).ready(function() {
 			$('#ticket_descripcion').summernote({
+				
 				height: 150,
         lang: "es-ES",
         callbacks: {
@@ -26,8 +27,12 @@ $(document).ready(function() {
 		});
 
 function guardar_editar(e){
-	e.preventDefault(); 
+	 
+        e.preventDefault(); 
 	var formData = new FormData($("#ticket_form")[0]);
+	if ($('#ticket_descripcion').summernote('isEmpty') || $('#titulo_ticket').val()=='') {
+        swal("Atencion", "Campos Vacios", "warning");
+    }else{
 	$.ajax({
 		url:"../../controller/ticket.php?op=insertar",
 		type: "POST",
@@ -38,7 +43,12 @@ function guardar_editar(e){
 			$('#titulo_ticket').val('');
 			$('#ticket_descripcion').summernote('reset');
 			swal("Correcto","Registrado correctamente","success");
-		}
-	})
+        }
+
+
+	
+		});
+	}
 }
+
 init();

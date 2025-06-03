@@ -3,10 +3,7 @@ function init(){
 }
 $(document).ready(function() {
     var id_ticket = getUrlParameter('ID');
-    $.post("../../controller/ticket.php?op=listardetalle", {id_ticket : id_ticket},function (data){
-        
-        $('#detalleDelTicket').html(data);
-    });
+    ListarDetalle(id_ticket);
      $.post("../../controller/ticket.php?op=mostrar", {id_ticket : id_ticket},function (data){
         data = JSON.parse(data)
         $('#estado').html(data.estado_ticket);
@@ -16,6 +13,12 @@ $(document).ready(function() {
         $('#ticket_titulo').val(data.titulo_ticket);
         $('#categoria_nombre').val(data.nombre_categoria);
         $('#detalle_descripcion_ticket_usuario').summernote('code', data.descripcion_ticket);
+        console.log(data.estado_ticket_texto)
+        if(data.estado_ticket_texto=="Cerrado"){
+            $('#panel_detalle').hide();
+        }
+        
+
      });
 
   $('#detalle_descripcion_ticket').summernote({
@@ -37,6 +40,8 @@ $(document).ready(function() {
         lang: "es-ES",
         
 		});
+
+         $('#detalle_descripcion_ticket_usuario').summernote('disable');
     });
     
      
@@ -54,6 +59,64 @@ var getUrlParameter = function getUrlParameter(sParam) {
         }
     }
 };
+$(document).on ("click","#btnenviar", function(){
+
+    var id_ticket = getUrlParameter('ID');
+    var id_usuario =$('#user_id').val();
+    var detalle_descripcion_ticket =$('#detalle_descripcion_ticket').val();
+
+    if($('#detalle_descripcion_ticket').summernote('isEmpty')){
+          swal("Atencion", "Falta la descripcion", "warning");
+    }else{
+        
+        $.post("../../controller/ticket.php?op=insertar_detalle", {id_ticket : id_ticket,id_usuario : id_usuario, detalle_descripcion_ticket: detalle_descripcion_ticket},
+            function (data){
+                ListarDetalle(id_ticket);
+             $('#detalle_descripcion_ticket').summernote('reset');   	
+            swal("Correcto","Registrado correctamente","success");
+    });
+
+  
+}
+});
+
+$(document).on ("click","#btncerrar", function(){
+    swal({
+							title: "Soporte Tecnico",
+							text: "¿Esta seguro de cerrar su ticket?",
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonClass: "btn-danger",
+							confirmButtonText: "Sí",
+							cancelButtonText: "No",
+							closeOnConfirm: false
+							
+						},
+						function(isConfirm) {
+							if (isConfirm) {
+                                var id_ticket = getUrlParameter('ID');
+                                $.post("../../controller/ticket.php?op=update", {id_ticket : id_ticket},function (data){
+       
+     });
+
+								swal({
+									title: "Atencion",
+									text: "Ticket cerrado correctamente.",
+									type: "success",
+									confirmButtonClass: "btn-success"
+								});
+							
+							}
+						});
+
+});
+
+function ListarDetalle(id_ticket){
+    $.post("../../controller/ticket.php?op=listardetalle", {id_ticket : id_ticket},function (data){
+        
+        $('#detalleDelTicket').html(data);
+    });
+}
 
 init();
 

@@ -14,6 +14,12 @@
         );
         break;
 
+        case "update":
+        $ticket->actualizar_ticket(
+            $_POST["id_ticket"]
+        );
+        break;
+
     case "listaTicket_por_usuario":
         $datos = $ticket->listarTicket_por_usuario($_POST["id_usuario"]);
         $data = array();
@@ -123,6 +129,7 @@
 
         break;
          case "mostrar":
+
           
             $datos=$ticket->listar_ticketporID($_POST["id_ticket"]);
             if(is_array($datos)==true and count($datos)>0){
@@ -140,7 +147,7 @@
                     }
                   
 
-
+                     $output["estado_ticket_texto"] = $row["estado_ticket"];
                     $output["fecha_TicketCreacion"] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
                   
                     $output["usuario_nombre"] = $row["usuario_nombre"];
@@ -152,6 +159,16 @@
                 echo json_encode($output);
             }
             break;
+
+
+             case "insertar_detalle":
+        $ticket->insertar_ticketdetalle(
+            $_POST["id_ticket"],
+            $_POST["id_usuario"],
+            $_POST["detalle_descripcion_ticket"],
+            
+        );
+        break;
 
 
 
