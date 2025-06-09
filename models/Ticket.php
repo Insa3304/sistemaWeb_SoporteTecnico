@@ -145,13 +145,71 @@
 
         }
 
+         public function detalle_ticket_cerrado($id_ticket,$id_usuario,){
+            $conectar= parent::conexion();
+            parent::set_names();
+
+            $sql="INSERT INTO detalle_ticket (key_id_ticket,id_ticket,id_usuario,detalle_descripcion_ticket,fecha_TicketCreacion,estado) VALUES (NULL,?,?,'Ticket Cerrado',now(),'1');";
+            $sql=$conectar->prepare($sql);
+            $sql->bindValue(1, $id_ticket);
+            $sql->bindValue(2, $id_usuario);
+           
+            $sql->execute();
 
 
+        
+            return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
+        }
 
 
+         public function get_ticketTotal(){
+        $conectar= parent::conexion();
+            parent::set_names();
+            $sql="SELECT COUNT(*) as TOTAL FROM ticket";
+            $sql=$conectar->prepare($sql);
+            
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+    }
+
+     public function get_ticketTotalAbierto(){
+        $conectar= parent::conexion();
+            parent::set_names();
+            $sql="SELECT COUNT(*) as TOTAL FROM ticket where  estado_ticket='Abierto'";
+            $sql=$conectar->prepare($sql);
+           
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+    }
+    public function get_ticketTotalCerrado(){
+        $conectar= parent::conexion();
+            parent::set_names();
+            $sql="SELECT COUNT(*) as TOTAL FROM ticket where estado_ticket='Cerrado'";
+            $sql=$conectar->prepare($sql);
+            
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+    }
 
 
-
+     public function get_ticket_grafico(){
+            $conectar= parent::conexion();
+            parent::set_names();
+            $sql="SELECT categoria.nombre_categoria as nom,COUNT(*) AS total
+                FROM   ticket  JOIN  
+                    categoria ON ticket.id_categoria = categoria.id_categoria  
+                WHERE    
+                ticket.estado = 1
+                GROUP BY
+                categoria.nombre_categoria
+                ORDER BY total DESC";
+            $sql=$conectar->prepare($sql);
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+        }
 
 
 

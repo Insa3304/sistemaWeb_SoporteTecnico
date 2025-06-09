@@ -18,6 +18,10 @@
         $ticket->actualizar_ticket(
             $_POST["id_ticket"]
         );
+
+        $ticket->detalle_ticket_cerrado(
+            $_POST["id_ticket"],$_POST["id_usuario"]
+        );
         break;
 
     case "listaTicket_por_usuario":
@@ -91,7 +95,7 @@
 						<div class="activity-line-item-user">
 							<div class="activity-line-item-user-photo">
 								<a href="#">
-									<img src="img/photo-64-2.jpg" alt="">
+									<img src="../../public/<?php echo $row['rol_id']?>.png" alt="">
 								</a>
 							</div>
 							<div class="activity-line-item-user-name"><?php echo $row['usuario_nombre'].' '.$row['usuario_apellido'];?></div>
@@ -169,6 +173,45 @@
             
         );
         break;
+
+         case "total":
+    $datos = $ticket->get_ticketTotal();
+    if (is_array($datos)==true and count($datos) > 0) {
+        foreach ($datos as $row) {
+            $output["TOTAL"] = $row["TOTAL"];
+           
+        }
+        echo json_encode($output);
+    }
+        break;
+
+         case "totalabierto":
+    $datos = $ticket->get_ticketTotalAbierto();
+    if (is_array($datos)==true and count($datos) > 0) {
+        foreach ($datos as $row) {
+            $output["TOTAL"] = $row["TOTAL"];
+           
+        }
+        echo json_encode($output);
+        break;
+    }
+
+    case "totalcerrado":
+        $datos = $ticket->get_ticketTotalCerrado();
+    if (is_array($datos)==true and count($datos) > 0) {
+        foreach ($datos as $row) {
+            $output["TOTAL"] = $row["TOTAL"];
+           
+        }
+        echo json_encode($output);
+        break;
+
+    }
+
+    case "grafico";
+    $datos=$ticket-> get_ticket_grafico();
+    echo json_encode($datos);
+    break;
 
 
 

@@ -13,12 +13,12 @@ $(document).on("click", "#vista_soporte", function () {
         $('#lbltitulo').html("Acceso Soporte");
         $('#vista_soporte').html("Acceso Usuario");
         $('#rol_id').val(2);
-        $("#imgtipo").attr("src","public/2.jpg");
+        $("#imagen_rol").attr("src","../public/2.png");
     }else{
         $('#lbltitulo').html("Acceso Usuario");
         $('#btnsoporte').html("Acceso Soporte");
         $('#rol_id').val(1);
-        $("#imgtipo").attr("src","public/1.jpg");
+        $("#imagen_rol").attr("src","../public/1.png");
     }
 });
 

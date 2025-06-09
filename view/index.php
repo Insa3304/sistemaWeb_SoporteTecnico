@@ -37,7 +37,7 @@ if(isset($_POST["enviar"]) and $_POST["enviar"]=="si"){
                 <form class="sign-box" method="post" action=""  id="login_form">
                     <input type="hidden" id = "rol_id" name="rol_id" value="1">
                     <div class="sign-avatar">
-                        <img src="../public/img/avatar-sign.png" alt="">
+                        <img src="/UgelTicketsSoporte/public/1.png" alt="" id="imagen_rol">
                     </div>
                     <header class="sign-title" id="lbltitulo">Usuario</header>
 

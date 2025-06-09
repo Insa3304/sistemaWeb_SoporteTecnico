@@ -4,22 +4,7 @@ function init(){
 $(document).ready(function() {
     var id_ticket = getUrlParameter('ID');
     ListarDetalle(id_ticket);
-     $.post("../../controller/ticket.php?op=mostrar", {id_ticket : id_ticket},function (data){
-        data = JSON.parse(data)
-        $('#estado').html(data.estado_ticket);
-        $('#nombre_usuario').html(data.usuario_nombre + ' ' +data.usuario_apellido);
-        $('#fecha_TicketCreacion').html(data.fecha_TicketCreacion);
-        $('#numidticket').html("Detalle Ticket - " + data.id_ticket);
-        $('#ticket_titulo').val(data.titulo_ticket);
-        $('#categoria_nombre').val(data.nombre_categoria);
-        $('#detalle_descripcion_ticket_usuario').summernote('code', data.descripcion_ticket);
-        console.log(data.estado_ticket_texto)
-        if(data.estado_ticket_texto=="Cerrado"){
-            $('#panel_detalle').hide();
-        }
-        
-
-     });
+    
 
   $('#detalle_descripcion_ticket').summernote({
 				height: 150,
@@ -95,9 +80,13 @@ $(document).on ("click","#btncerrar", function(){
 						function(isConfirm) {
 							if (isConfirm) {
                                 var id_ticket = getUrlParameter('ID');
-                                $.post("../../controller/ticket.php?op=update", {id_ticket : id_ticket},function (data){
+                                id_usuario =$('#user_id').val();
+                                $.post("../../controller/ticket.php?op=update", {id_ticket : id_ticket,id_usuario :id_usuario},function (data){
        
      });
+
+      
+    ListarDetalle(id_ticket);
 
 								swal({
 									title: "Atencion",
@@ -116,6 +105,23 @@ function ListarDetalle(id_ticket){
         
         $('#detalleDelTicket').html(data);
     });
+
+     $.post("../../controller/ticket.php?op=mostrar", {id_ticket : id_ticket},function (data){
+        data = JSON.parse(data)
+        $('#estado').html(data.estado_ticket);
+        $('#nombre_usuario').html(data.usuario_nombre + ' ' +data.usuario_apellido);
+        $('#fecha_TicketCreacion').html(data.fecha_TicketCreacion);
+        $('#numidticket').html("Detalle Ticket - " + data.id_ticket);
+        $('#ticket_titulo').val(data.titulo_ticket);
+        $('#categoria_nombre').val(data.nombre_categoria);
+        $('#detalle_descripcion_ticket_usuario').summernote('code', data.descripcion_ticket);
+        console.log(data.estado_ticket_texto)
+        if(data.estado_ticket_texto=="Cerrado"){
+            $('#panel_detalle').hide();
+        }
+        
+
+     });
 }
 
 init();

@@ -38,6 +38,12 @@
                     </li>
                     
                     <li class="blue-dirty">
+                        <a href="..\creacion_usuarios\">
+                            <span class="glyphicon glyphicon-th"></span>
+                            <span class="lbl">Creación  de usuarios</span>
+                        </a>
+
+                    <li class="blue-dirty">
                         <a href="..\ConsultarTicket\">
                             <span class="glyphicon glyphicon-th"></span>
                             <span class="lbl">Consultar Ticket</span>
