@@ -4,11 +4,21 @@ var rol_id = $('#rold_id').val();
 
 
 function init(){
-   
+   $("#ticket_form").on("submit",function(e){
+        guardar(e);
+    });
+
+
+
 }
 
 
 $(document).ready(function(){
+
+
+    $.post("../../controller/usuario.php?op=combo", function (data){
+        $('#usuario_asignado').html(data);
+    })
     
         if(rol_id==1){
         tabla=$('#ticket_info').dataTable({
@@ -131,6 +141,33 @@ function ver(id_ticket){
     window.open('http://localhost/UgelTicketsSoporte/view/DetalleTicket/?ID='+ id_ticket +''); //abre una nueva pestaña
 }
 
+function asignar(id_ticket){
+    $.post("../../controller/ticket.php?op=mostrar", {id_ticket : id_ticket}, function (data){
+
+        data= JSON.parse(data);
+        $('#id_ticket').val(data.id_ticket);
+        $('#mdltitulo').html('Asignar técnico');
+        $("#asignar").modal('show');
+        
+    });
+}
+
+  function guardar(e){
+    e.preventDefault();
+
+    var formData = new FormData($("#ticket_form")[0]);
+    $.ajax({
+        url: "../../controller/ticket.php?op=asignar_usuario",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(datos){
+            $("#asignar").modal('hide');
+            $('#ticket_info').DataTable().ajax.reload();
+        }
+    });
+}
 
 
 init();

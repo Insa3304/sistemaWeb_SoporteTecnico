@@ -5,7 +5,8 @@
         public function insertar_ticket($id_usuario,$id_categoria,$titulo_ticket,$descripcion_ticket){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="INSERT INTO ticket (id_ticket,id_usuario, id_categoria, titulo_ticket, descripcion_ticket,estado_ticket,fecha_TicketCreacion, estado) VALUES (NULL,?, ?, ?, ?,'Abierto',now() ,'1');";
+            $sql="INSERT INTO ticket (id_ticket,id_usuario, id_categoria, titulo_ticket, descripcion_ticket,estado_ticket,fecha_TicketCreacion,
+            usuario_asignado,fecha_asignacion, estado) VALUES (NULL,?, ?, ?, ?,'Abierto',now(),null,null ,'1');";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1,$id_usuario);
             $sql->bindValue(2,$id_categoria);
@@ -26,6 +27,8 @@
                 ticket.descripcion_ticket,
                 ticket.estado_ticket,
                 ticket.fecha_TicketCreacion,
+                ticket.usuario_asignado,
+                ticket.fecha_asignacion,
                 usuario.usuario_nombre,
                 usuario.usuario_apellido,
                 categoria.nombre_categoria
@@ -53,6 +56,8 @@
                 ticket.descripcion_ticket,
                 ticket.estado_ticket,
                 ticket.fecha_TicketCreacion,
+                 ticket.usuario_asignado,
+                ticket.fecha_asignacion,
                 usuario.usuario_nombre,
                 usuario.usuario_apellido,
                 categoria.nombre_categoria
@@ -145,11 +150,25 @@
 
         }
 
+
+         public function asignacion_Ticket($id_ticket,$usuario_asignado){
+            $conectar= parent::conexion();
+            parent::set_names();
+            $sql="UPDATE ticket set usuario_asignado= ?, fecha_asignacion= now() where id_ticket=?;";
+
+            $sql=$conectar->prepare($sql);
+            $sql->bindValue(1,$usuario_asignado);
+            $sql->bindValue(2,$id_ticket);
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+        }
+
          public function detalle_ticket_cerrado($id_ticket,$id_usuario,){
             $conectar= parent::conexion();
             parent::set_names();
 
-            $sql="INSERT INTO detalle_ticket (key_id_ticket,id_ticket,id_usuario,detalle_descripcion_ticket,fecha_TicketCreacion,estado) VALUES (NULL,?,?,'Ticket Cerrado',now(),'1');";
+            $sql="call sp_insert_ticketDetalle01(?,?)";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $id_ticket);
             $sql->bindValue(2, $id_usuario);

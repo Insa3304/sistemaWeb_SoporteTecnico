@@ -94,7 +94,7 @@ function editar(id_usuario) {
    $('#ventanaTitulo').html('Editar Registro'); 
 
     $.post("../../controller/usuario.php?op=mostrar", { id_usuario: id_usuario }, function (data) {
-                data=JSON.parse(data);
+               data= JSON.parse(data);
                  $('#id_usuario').val(data.id_usuario);
                 $('#usuario_nombre').val(data.usuario_nombre);
                 $('#usuario_apellido').val(data.usuario_apellido);

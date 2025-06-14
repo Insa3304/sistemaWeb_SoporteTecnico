@@ -111,6 +111,22 @@
     break;
 
 
+     case "combo";
+            $datos = $usuario->get_usuarioPorRol();
+            if(is_array($datos)==true and count($datos)>0){
+                $html.= "<option label='Seleccionar'></option>";
+                foreach($datos as $row)
+                {
+                    $html.= "<option value='".$row['id_usuario']."'>".$row['usuario_nombre']."</option>";
+                }
+                echo $html;
+            }
+            break;
+
+
+
+
+
   
     }
 

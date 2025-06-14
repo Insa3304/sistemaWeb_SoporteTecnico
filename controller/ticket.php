@@ -3,6 +3,9 @@
     require_once("../models/Ticket.php");
     $ticket = new Ticket();
 
+    require_once("../models/Usuario.php");
+    $usuario = new Usuario();
+
 
     switch ($_GET["op"]) {
     case "insertar":
@@ -15,13 +18,13 @@
         break;
 
         case "update":
-        $ticket->actualizar_ticket(
-            $_POST["id_ticket"]
-        );
+        $ticket->actualizar_ticket($_POST["id_ticket"]);
+            $ticket->detalle_ticket_cerrado($_POST["id_ticket"],$_POST["id_usuario"]);
+        break;
 
-        $ticket->detalle_ticket_cerrado(
-            $_POST["id_ticket"],$_POST["id_usuario"]
-        );
+         case "asignar_usuario":
+        
+            $ticket->asignacion_Ticket($_POST["id_ticket"],$_POST["usuario_asignado"]);
         break;
 
     case "listaTicket_por_usuario":
@@ -38,9 +41,30 @@
                 $sub_array[] = '<span class="label label-pill label-danger">Cerrado</span>';
             }
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
+
+            if($row["fecha_asignacion"]==null){
+                  $sub_array[] = '<span class="label label-pill label-danger">Sin asignar</span>';
+            }else{
+                 $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_asignacion"]));
+            }
+
+             if($row["usuario_asignado"]==null){
+
+                 $sub_array[] = '<span class="label label-pill label-warning">Técnico no asignado</span>';
+            }else{
+
+                $datos1=$usuario->get_usuarioPor_id($row["usuario_asignado"]);
+                foreach($datos1 as $row1){
+                     $sub_array[] = '<span class="label label-pill label-success">'.$row1["usuario_nombre"] .'span>';
+                }
+            }
+            
             $sub_array[] = '<button type="button" onClick="ver(' . $row["id_ticket"] . ');" id="' . $row["id_ticket"] . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
+
             $data[] = $sub_array;
         }
+
+
 
         $results = array(
             "sEcho" => 1,
@@ -66,6 +90,25 @@
                 $sub_array[] = '<span class="label label-pill label-danger">Cerrado</span>';
             }
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
+
+            if($row["fecha_asignacion"]==null){
+                  $sub_array[] = '<span class="label label-pill label-danger">Sin asignar</span>';
+            }else{
+                 $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_asignacion"]));
+            }
+
+             if($row["usuario_asignado"]==null){
+
+                 $sub_array[] = '<a onClick="asignar('.$row["id_ticket"].');"><span class="label label-pill label-warning">Técnico no asignado</span></a>';
+            }else{
+
+                $datos1=$usuario->get_usuarioPor_id($row["usuario_asignado"]);
+                foreach($datos1 as $row1){
+                     $sub_array[] = '<span class="label label-pill label-success">'.$row1["usuario_nombre"] .'</span>';
+                }
+            }
+
+
             $sub_array[] = '<button type="button" onClick="ver(' . $row["id_ticket"] . ');" id="' . $row["id_ticket"] . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
             $data[] = $sub_array;
         }

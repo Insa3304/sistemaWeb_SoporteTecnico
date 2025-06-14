@@ -49,8 +49,9 @@ class Usuario extends Conectar{
     public function insertar_usuario($usuario_nombre,$usuario_apellido,$usuario_correo,$usuario_contraseña,$rol_id){
 
         $conectar= parent::conexion();
-          $sql="INSERT INTO usuario (usuario_nombre, usuario_apellido, usuario_correo, usuario_contraseña, rol_id, fecha_creacion, estado)
-VALUES (?, ?, ?, ?, ?, now(), '1');";
+          $sql="INSERT INTO usuario (id_usuario,usuario_nombre, usuario_apellido, usuario_correo, usuario_contraseña, rol_id, fecha_creacion,
+          fecha_modificacion, fecha_eliminacion, estado)
+        VALUES (null,?, ?, ?,MD5(?), ?, now(), null, null,'1');";
 
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $usuario_nombre);
@@ -106,7 +107,17 @@ VALUES (?, ?, ?, ?, ?, now(), '1');";
     public function get_usuario(){
         $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT*FROM usuario  WHERE estado='1'";
+            $sql="call sp_l_usuario_01()";
+            $sql=$conectar->prepare($sql);
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+    }
+
+     public function get_usuarioPorRol(){
+        $conectar= parent::conexion();
+            parent::set_names();
+            $sql="SELECT * from usuario where estado=1 and rol_id=2";
             $sql=$conectar->prepare($sql);
             $sql->execute();
             return $resultado=$sql->fetchAll();
@@ -117,7 +128,7 @@ VALUES (?, ?, ?, ?, ?, now(), '1');";
     public function get_usuarioPor_id($id_usuario){
         $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT*FROM usuario WHERE id_usuario=?";
+            $sql="call sp_l_usuario02(?)";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $id_usuario);
             $sql->execute();
