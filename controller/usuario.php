@@ -13,9 +13,7 @@
            }else{
             $usuario->editar_usuario($_POST["id_usuario"],$_POST["usuario_nombre"],$_POST["usuario_apellido"],$_POST["usuario_correo"],$_POST["usuario_contraseña"],$_POST["rol_id"]);
            }
-        break;
-        
-        
+        break;       
         case "listar":
          $datos = $usuario->get_usuario();
         $data = array();
@@ -111,7 +109,7 @@
     break;
 
 
-     case "combo";
+            case "combo";
             $datos = $usuario->get_usuarioPorRol();
             if(is_array($datos)==true and count($datos)>0){
                 $html.= "<option label='Seleccionar'></option>";
@@ -121,13 +119,16 @@
                 }
                 echo $html;
             }
-            break;
+          break;
 
+          case "cambiar_contraseña":
+             $usuario->actualizarClave_usuario(
+            $_POST["id_usuario"],$_POST["usuario_contraseña"]
+        ) ;
+        break;
 
+            
 
-
-
-  
     }
 
 ?>

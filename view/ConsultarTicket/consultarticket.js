@@ -14,8 +14,6 @@ function init(){
 
 
 $(document).ready(function(){
-
-
     $.post("../../controller/usuario.php?op=combo", function (data){
         $('#usuario_asignado').html(data);
     })
@@ -130,10 +128,6 @@ $(document).ready(function(){
         }).DataTable();
 
     }
-    
-    
-
-
 });
 
 function ver(id_ticket){
@@ -168,6 +162,39 @@ function asignar(id_ticket){
         }
     });
 }
+
+function Cambiar_estado(id_ticket){
+    
+    swal({
+        title: "Soporte Técnico",
+        text: "¿Está seguro que desea reabrir este ticket?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-warning",
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+        closeOnConfirm: false
+    }, function (isConfirm) {
+        if (isConfirm) {
+            $.post("../../controller/ticket.php?op=reabrir_ticket", { id_ticket: id_ticket, id_usuario:id_usuario}, function (data) {
+
+            });
+                $('#ticket_info').DataTable().ajax.reload();
+
+                swal({
+                    title: "Atención",
+                    text: "Ticket reabierto.",
+                    type: "success",
+                    confirmButtonClass: "btn-success"
+                });
+            
+        }
+    });
+
+    
+}
+
+
 
 
 init();

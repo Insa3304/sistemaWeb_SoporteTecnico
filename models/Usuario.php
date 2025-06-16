@@ -218,7 +218,25 @@ class Usuario extends Conectar{
             $sql->execute();
             return $resultado=$sql->fetchAll();
         }
-}
-    
+
+
+            public function actualizarClave_usuario($id_usuario,$usuario_contraseña){
+            $conectar= parent::conexion();
+            parent::set_names();
+            $sql="UPDATE usuario set
+                usuario_contraseña = ?
+                WHERE
+                id_usuario = ?";
+            $sql=$conectar->prepare($sql);
+            $sql->bindValue(1, $usuario_contraseña);
+            $sql->bindValue(2, $id_usuario);
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+     }
+
+    }
+
+     
 
 ?>

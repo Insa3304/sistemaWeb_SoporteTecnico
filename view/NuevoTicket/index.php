@@ -55,6 +55,14 @@
                         <input type="hidden" id="id_usuario" name="id_usuario" value="<?php echo $_SESSION["id_usuario"] ?>">
 
 
+                         <div class="col-lg-12">
+                            <fieldset class="form-group">
+                                <label class="form-label semibold" for="titulo_ticket">Titulo</label>
+                                <input type="text" class="form-control" id="titulo_ticket" name="titulo_ticket" placeholder="Ingrese Titulo">
+                            </fieldset>
+                        </div>
+
+
                         <div class="col-lg-6">
                             <fieldset class="form-group">
                                 <label class="form-label semibold" for="exampleInput">Categoria</label>
@@ -64,12 +72,27 @@
                                 </select>
                             </fieldset>
                         </div>
-                        <div class="col-lg-6">
+
+                         <div class="col-lg-6">
                             <fieldset class="form-group">
-                                <label class="form-label semibold" for="titulo_ticket">Titulo</label>
-                                <input type="text" class="form-control" id="titulo_ticket" name="titulo_ticket" placeholder="Ingrese Titulo">
+                                <label class="form-label semibold" for="exampleInput">Documentos adicionales</label>
+                                <input type="file" name="fileElem" id="fileElem" class="form-control" multiple>
+                                    
+                                   
+                                </select>
                             </fieldset>
                         </div>
+
+                        <div class="col-lg-6">
+                            <fieldset class="form-group">
+                                <label class="form-label semibold" for="exampleInput">Prioridad</label>
+                                <select id="id_prioridad" name="id_prioridad" class="form-control">
+                                    
+                                   
+                                </select>
+                            </fieldset>
+                        </div>
+                       
                         <div class="col-lg-12"> 
                             <fieldset class="form-group">
                                 <label class="form-label semibold" for="ticket_descripcion">Descripción</label>

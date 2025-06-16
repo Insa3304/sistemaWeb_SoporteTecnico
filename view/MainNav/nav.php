@@ -42,6 +42,16 @@
                             <span class="glyphicon glyphicon-th"></span>
                             <span class="lbl">Creación  de usuarios</span>
                         </a>
+                    </li>
+
+                    <li class="blue-dirty">
+                        <a href="..\CRUD_categoria\">
+                            <span class="glyphicon glyphicon-th"></span>
+                            <span class="lbl">Creación de categorias</span>
+                        </a>
+                    </li>
+
+
 
                     <li class="blue-dirty">
                         <a href="..\ConsultarTicket\">

@@ -1,11 +1,11 @@
 <?php
-    class Categoria extends Conectar{
+    class Prioridad extends Conectar{
 
 
-        public function get_categoria(){
+        public function get_prioridad(){
             $conectar= parent::conexion();
             parent::set_names();
-            $sql="SELECT * FROM categoria WHERE estado=1;";
+            $sql="SELECT * FROM prioridad WHERE estado_prioridad=1;";
             $sql=$conectar->prepare($sql);
             $sql->execute();
             return $resultado=$sql->fetchAll();

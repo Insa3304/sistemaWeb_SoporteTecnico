@@ -6,21 +6,60 @@
     require_once("../models/Usuario.php");
     $usuario = new Usuario();
 
+     require_once("../models/Documento.php");
+    $documento = new Documento();
+
 
     switch ($_GET["op"]) {
     case "insertar":
-        $ticket->insertar_ticket(
+        $datos=$ticket->insertar_ticket(
             $_POST["id_usuario"],
             $_POST["id_categoria"],
             $_POST["titulo_ticket"],
-            $_POST["descripcion_ticket"]
+            $_POST["descripcion_ticket"],
+            $_POST["id_prioridad"]
         );
+        if (is_array($datos)==true and count($datos)>0){
+            foreach($datos as $row){
+                $output["id_ticket"]= $row["id_ticket"];
+
+                if(empty($_FILES['files']['name'])){
+
+                }else{
+                    $countfiles = count($_FILES['files']['name']);
+                    $ruta= "../public/document/".$output["id_ticket"]."/";
+                    $files_arr = array();
+
+                    if(!file_exists($ruta)){
+                        mkdir($ruta,0777,true);
+                    }
+
+                    for($index=0; $index<$countfiles; $index++){
+                        $doc1 = $_FILES['files']['tmp_name'][$index];
+                        $destino = $ruta.$_FILES['files']['name'][$index];
+
+                        $documento->insert_documento($output["id_ticket"],$_FILES['files']['name'][$index]);
+
+                        move_uploaded_file($doc1,$destino);
+
+                    }
+                }
+            }
+        }
+        echo json_encode($datos);
         break;
 
         case "update":
         $ticket->actualizar_ticket($_POST["id_ticket"]);
-            $ticket->detalle_ticket_cerrado($_POST["id_ticket"],$_POST["id_usuario"]);
+            $ticket->detalle_ticket_reabrir($_POST["id_ticket"],$_POST["id_usuario"]);
         break;
+
+         case "reabrir_ticket":
+        $ticket->reabrir_ticket($_POST["id_ticket"]);
+              $ticket->detalle_ticket_reabrir($_POST["id_ticket"],$_POST["id_usuario"]);
+        break;
+
+
 
          case "asignar_usuario":
         
@@ -35,10 +74,12 @@
             $sub_array[] = $row["id_ticket"];
             $sub_array[] = $row["nombre_categoria"];
             $sub_array[] = $row["titulo_ticket"];
+            $sub_array[] = $row["nombre_prioridad"];
+            $_POST["id_prioridad"];
             if ($row["estado_ticket"] == "Abierto") {
                 $sub_array[] = '<span class="label label-pill label-success">Abierto</span>';
             } else {
-                $sub_array[] = '<span class="label label-pill label-danger">Cerrado</span>';
+                $sub_array[] = '<a onClick="Cambiar_estado('. $row["id_ticket"]. ')"><span class="label label-pill label-danger">Cerrado</span><a>';
             }
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
 
@@ -46,6 +87,12 @@
                   $sub_array[] = '<span class="label label-pill label-danger">Sin asignar</span>';
             }else{
                  $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_asignacion"]));
+            }
+
+            if($row["fecha_cierre"]==null){
+                  $sub_array[] = '<span class="label label-pill label-danger">Sin cerrar</span>';
+            }else{
+                 $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_cierre"]));
             }
 
              if($row["usuario_asignado"]==null){
@@ -84,10 +131,11 @@
             $sub_array[] = $row["id_ticket"];
             $sub_array[] = $row["nombre_categoria"];
             $sub_array[] = $row["titulo_ticket"];
+            $sub_array[] = $row["nombre_prioridad"];
             if ($row["estado_ticket"] == "Abierto") {
                 $sub_array[] = '<span class="label label-pill label-success">Abierto</span>';
             } else {
-                $sub_array[] = '<span class="label label-pill label-danger">Cerrado</span>';
+                $sub_array[] = '<a onClick="Cambiar_estado('. $row["id_ticket"]. ')"><span class="label label-pill label-danger">Cerrado</span><a>';
             }
             $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
 
@@ -95,6 +143,12 @@
                   $sub_array[] = '<span class="label label-pill label-danger">Sin asignar</span>';
             }else{
                  $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_asignacion"]));
+            }
+
+            if($row["fecha_cierre"]==null){
+                  $sub_array[] = '<span class="label label-pill label-danger">Sin cerrar</span>';
+            }else{
+                 $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_cierre"]));
             }
 
              if($row["usuario_asignado"]==null){
@@ -195,12 +249,12 @@
                   
 
                      $output["estado_ticket_texto"] = $row["estado_ticket"];
-                    $output["fecha_TicketCreacion"] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
-                  
+                     $output["fecha_TicketCreacion"] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
+                     $output["fecha_cierre"] = date("d/m/Y H:i:s", strtotime($row["fecha_cierre"]));
                     $output["usuario_nombre"] = $row["usuario_nombre"];
                     $output["usuario_apellido"] = $row["usuario_apellido"];
                     $output["nombre_categoria"] = $row["nombre_categoria"];
-                    
+                    $output["nombre_prioridad"] = $row["nombre_prioridad"];
                   
                 }
                 echo json_encode($output);

@@ -52,6 +52,32 @@
               </fieldset>
             </div>
 
+            <div class="col-lg-6">
+              <fieldset class="form-group">
+                <label class="form-label semibold" for="categoria_nombre">Prioridad</label>
+                <input type="text" class="form-control" id="nombre_prioridad" name="nombre_prioridad" readonly>
+              </fieldset>
+            </div>
+
+
+            <div class="col-lg-12">
+                <fieldset class="form-group">
+                  <label class="form-label semibold" for="ticket_titulo">Documentos Adicionales</label>
+                  <table id="documentos_info" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                    <thead>
+                      <tr>
+                        <th style="width: 90%;">Nombre</th>
+                        <th class="text-center" style="width: 10%;"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+
+                    </tbody>
+                  </table>
+                </fieldset>
+              </div>
+
             <div class="col-lg-12">
               <fieldset class="form-group">
                 <label class="form-label semibold" for="detalle_descripcion_ticket_usuario">Descripción</label>
@@ -60,6 +86,7 @@
                   </div>
               </fieldset>
             </div>
+
           </div>
         </div>
 
