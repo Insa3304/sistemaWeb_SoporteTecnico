@@ -255,14 +255,30 @@
             return $resultado=$sql->fetchAll();
         }
 
-        public function reabrir_ticket($id_ticket){
-            $conectar= parent::conexion();
+    public function reabrir_ticket($id_ticket){
+     $conectar= parent::conexion();
             parent::set_names();
             $sql="update ticket set estado_ticket ='Abierto' where id_ticket=?;";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1,$id_ticket);
             $sql->execute();
             return $resultado=$sql->fetchAll();
+
+        }
+        
+
+        public function filtrar_ticket($titulo_ticket,$id_categoria,$id_prioridad){
+             $conectar= parent::conexion();
+            parent::set_names();
+            $sql="call filtrado_ticket (?,?,?)";
+            $sql=$conectar->prepare($sql);
+            $sql->bindValue(1, "%".$titulo_ticket."%");
+            $sql->bindValue(2, $id_categoria);
+            $sql->bindValue(3, $id_prioridad);
+            $sql->execute();
+            return $resultado=$sql->fetchAll();
+
+
 
         }
 

@@ -43,6 +43,49 @@
 
 
             <div class="box-typical box-typical-padding">
+                <div class="row" id="vista_usuario">
+                    <div class="col-lg-3">
+                        <fieldset class="form-group">
+                            <label class="form-label" for="titulo_ticket">Titulo</label>
+                            <input type="text" class="form-control" id="titulo_ticket" name="titulo_ticket" placeholder="Ingrese Titulo" required>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-lg-3">
+                        <fieldset class="form-group">
+                            <label class="form-label" for="id_categoria">Categoria</label>
+                            <select class="select2" id="id_categoria" name="id_categoria" data-placeholder="Seleccionar">
+                                <option label="Seleccionar"></option>
+                            </select>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-lg-2">
+                        <fieldset class="form-group">
+                            <label class="form-label" for="id_prioridad">Prioridad</label>
+                            <select class="select2" id="id_prioridad" name="id_prioridad" data-placeholder="Seleccionar">
+                                <option label="Seleccionar"></option>
+                            </select>
+                        </fieldset>
+                    </div>
+                    <div class="col-lg-2">
+                        <fieldset class="form-group">
+                            <label class="form-label" for="btnfiltrar">&nbsp;</label>
+                            <button type="submit" class="btn btn-rounded btn-primary btn-block" id="btnfiltrar">Filtrar</button>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-lg-2">
+                        <fieldset class="form-group">
+                            <label class="form-label" for="btnlimpiar">&nbsp;</label>
+                            <button type="submit" class="btn btn-rounded btn-primary btn-block" id="btnlimpiar">Limpiar</button>
+                        </fieldset>
+                    </div>
+  </div>
+
+
+
+                 <div class="box-typical box-typical-padding" id="table"> 
                 <table id="ticket_info" class="table table-bordered table-striped table-vcenter js-dataTable-full">
                     <thead>
                         <tr>
@@ -59,8 +102,6 @@
                         </tr>
                     </thead>
                     <tbody>
-
-
                     </tbody>
                 </table>
             </div>

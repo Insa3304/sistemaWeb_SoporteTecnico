@@ -75,7 +75,7 @@
             $sub_array[] = $row["nombre_categoria"];
             $sub_array[] = $row["titulo_ticket"];
             $sub_array[] = $row["nombre_prioridad"];
-            $_POST["id_prioridad"];
+            
             if ($row["estado_ticket"] == "Abierto") {
                 $sub_array[] = '<span class="label label-pill label-success">Abierto</span>';
             } else {
@@ -102,7 +102,7 @@
 
                 $datos1=$usuario->get_usuarioPor_id($row["usuario_asignado"]);
                 foreach($datos1 as $row1){
-                     $sub_array[] = '<span class="label label-pill label-success">'.$row1["usuario_nombre"] .'span>';
+                     $sub_array[] = '<span class="label label-pill label-success">'.$row1["usuario_nombre"] .'</span>';
                 }
             }
             
@@ -125,6 +125,61 @@
         case "listar":
 
         $datos = $ticket->listar_ticket();
+        $data = array();
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = $row["id_ticket"];
+            $sub_array[] = $row["nombre_categoria"];
+            $sub_array[] = $row["titulo_ticket"];
+            $sub_array[] = $row["nombre_prioridad"];
+            if ($row["estado_ticket"] == "Abierto") {
+                $sub_array[] = '<span class="label label-pill label-success">Abierto</span>';
+            } else {
+                $sub_array[] = '<a onClick="Cambiar_estado('. $row["id_ticket"]. ')"><span class="label label-pill label-danger">Cerrado</span><a>';
+            }
+            $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
+
+            if($row["fecha_asignacion"]==null){
+                  $sub_array[] = '<span class="label label-pill label-danger">Sin asignar</span>';
+            }else{
+                 $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_asignacion"]));
+            }
+
+            if($row["fecha_cierre"]==null){
+                  $sub_array[] = '<span class="label label-pill label-danger">Sin cerrar</span>';
+            }else{
+                 $sub_array[] = date("d/m/Y H:i:s", strtotime($row["fecha_cierre"]));
+            }
+
+             if($row["usuario_asignado"]==null){
+
+                 $sub_array[] = '<a onClick="asignar('.$row["id_ticket"].');"><span class="label label-pill label-warning">Técnico no asignado</span></a>';
+            }else{
+
+                $datos1=$usuario->get_usuarioPor_id($row["usuario_asignado"]);
+                foreach($datos1 as $row1){
+                     $sub_array[] = '<span class="label label-pill label-success">'.$row1["usuario_nombre"] .'</span>';
+                }
+            }
+
+
+            $sub_array[] = '<button type="button" onClick="ver(' . $row["id_ticket"] . ');" id="' . $row["id_ticket"] . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
+            $data[] = $sub_array;
+        }
+
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
+
+
+        case "listar_filtro":
+
+        $datos = $ticket->filtrar_ticket($_POST["titulo_ticket"],$_POST["id_categoria"],$_POST["id_prioridad"]);
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
