@@ -2,16 +2,16 @@ var tabla;
 
 
 function init(){
-   $("#formularioCategoria").on("submit",function(e){
+   $("#formularioUsuario").on("submit",function(e){
     guardaryeditar(e);
    });
 }
 
 function guardaryeditar(e){
     e.preventDefault();
-    var formData = new FormData($("#formularioCategoria")[0]);
+    var formData = new FormData($("#formularioUsuario")[0]);
     $.ajax({
-        url: "../../controller/usuario.php?op=guardaryeditar",
+        url: "../../controller/prioridad.php?op=guardaryeditar",
         type: "POST",
         data: formData,
         contentType: false,
@@ -21,7 +21,7 @@ function guardaryeditar(e){
             // Primero ocultamos el modal
             $('#ventanaRegistro').modal('hide');
             // Luego reseteamos el formulario
-            $('#formularioCategoria')[0].reset();
+            $('#formularioUsuario')[0].reset();
             // Recargamos la tabla
             $('#usuario_info').DataTable().ajax.reload();
 
@@ -29,7 +29,7 @@ function guardaryeditar(e){
         
             swal({
                     title: "Atención",
-                    text: "Usuario registrado correctamente.",
+                    text: "Prioridad registrada correctamente.",
                     type: "success",
                     confirmButtonClass: "btn-success"
                 });
@@ -40,7 +40,7 @@ function guardaryeditar(e){
 }
 
 $(document).ready(function () {
-    tabla = $('#categoria_info').dataTable({
+    tabla = $('#usuario_info').dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -54,7 +54,7 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: '../../controller/categoria.php?op=listar',
+            url: '../../controller/prioridad.php?op=listar',
             type: "post",
             dataType: "json",
             error: function (e) {
@@ -90,27 +90,22 @@ $(document).ready(function () {
     }).DataTable();
 });
 
-function editar(id_usuario) {
+function editar(id_prio) {
    $('#ventanaTitulo').html('Editar Registro'); 
 
-    $.post("../../controller/usuario.php?op=mostrar", { id_usuario: id_usuario }, function (data) {
+    $.post("../../controller/prioridad.php?op=mostrar", { id_prio: id_prio }, function (data) {
                data= JSON.parse(data);
-                 $('#id_usuario').val(data.id_usuario);
-                $('#usuario_nombre').val(data.usuario_nombre);
-                $('#usuario_apellido').val(data.usuario_apellido);
-                $('#usuario_correo').val(data.usuario_correo);
-                $('#usuario_contraseña').val(data.usuario_contraseña);
-                $('#rol_id').val(data.rol_id).trigger('change');
-
-              
+                 $('#id_prio').val(data.id_prio);
+                $('#nombre_prioridad').val(data.nombre_prioridad);
+               
             });
     $('#ventanaRegistro').modal('show');
 }
 
-function eliminar(id_usuario) {
+function eliminar(id_prio) {
     swal({
         title: "Soporte Técnico",
-        text: "¿Está seguro de eliminar este usuario?",
+        text: "¿Está seguro de eliminar este registro?",
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-danger",
@@ -119,7 +114,7 @@ function eliminar(id_usuario) {
         closeOnConfirm: false
     }, function (isConfirm) {
         if (isConfirm) {
-            $.post("../../controller/usuario.php?op=eliminar", { id_usuario: id_usuario }, function (data) {
+            $.post("../../controller/prioridad.php?op=eliminar", { id_prio: id_prio }, function (data) {
 
             });
                 $('#usuario_info').DataTable().ajax.reload();
@@ -137,8 +132,9 @@ function eliminar(id_usuario) {
     
 }
 $(document).on ("click","#btn_nuevousuario", function(){
+        $('#id_prio').val('');
         $('#ventanaTitulo').html('Nuevo Registro');
-        $('#formularioCategoria')[0].reset();
+        $('#formularioUsuario')[0].reset();
         $('#ventanaRegistro').modal('show');
 
     });

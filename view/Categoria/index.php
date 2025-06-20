@@ -43,8 +43,8 @@
 
 
             <div class="box-typical box-typical-padding">
-                <button type="button" id="btn_nuevacategoria" class = "btn btn-inline btn-primary">Registrar nueva categoria</button>
-                <table id="categoria_info" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                <button type="button" id="btn_nuevousuario" class = "btn btn-inline btn-primary">Nuevo registro</button>
+                <table id="usuario_info" class="table table-bordered table-striped table-vcenter js-dataTable-full">
                     <thead>
                         <tr>
                             <th style="width: 5%;">Nombre</th>
@@ -66,9 +66,9 @@
 
 
     
-	<?php require_once("registro_categoria.php"); ?>
+	<?php require_once("ventana_registro.php"); ?>
 	<?php require_once("../MainJavaScript/javascript.php"); ?>
-	<script type="text/javascript" src="crud_categoria.js"></script>
+	<script type="text/javascript" src="categoria.js"></script>
 
 
 </body>

@@ -40,14 +40,21 @@
                     <li class="blue-dirty">
                         <a href="..\creacion_usuarios\">
                             <span class="glyphicon glyphicon-th"></span>
-                            <span class="lbl">Creación  de usuarios</span>
+                            <span class="lbl">Usuarios</span>
                         </a>
                     </li>
 
                     <li class="blue-dirty">
-                        <a href="..\CRUD_categoria\">
+                        <a href="..\prioridad\">
                             <span class="glyphicon glyphicon-th"></span>
-                            <span class="lbl">Creación de categorias</span>
+                            <span class="lbl">Prioridad</span>
+                        </a>
+                    </li>
+
+                    <li class="blue-dirty">
+                        <a href="..\Categoria\">
+                            <span class="glyphicon glyphicon-th"></span>
+                            <span class="lbl">Categoria</span>
                         </a>
                     </li>
 
