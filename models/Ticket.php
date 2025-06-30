@@ -176,13 +176,31 @@
             return $resultado=$sql->fetchAll();
 
         }
+
+        public function detalle_ticket_cerrado($id_ticket,$id_usuario,){
+           $conectar= parent::conexion();
+           parent::set_names();
+           $sql="call sp_insert_ticketDetalle01(?,?)";
+
+           $sql=$conectar->prepare($sql);
+           $sql->bindValue(1, $id_ticket);
+           $sql->bindValue(2, $id_usuario);
+          
+           $sql->execute();
+
+
+       
+           return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
+       }
+
+
          public function detalle_ticket_reabrir($id_ticket,$id_usuario,){
             $conectar= parent::conexion();
             parent::set_names();
+           $sql="INSERT INTO detalle_ticket 
+           (key_id_ticket,id_ticket,id_usuario,detalle_descripcion_ticket,fecha_TicketCreacion,estado) 
+           VALUES (NULL,?, ?,'Ticket Reabierto',now(),'1');";
 
-            $sql="INSERT INTO detalle_ticket 
-            (key_id_ticket,id_ticket,id_usuario,detalle_descripcion_ticket,fecha_TicketCreacion,estado) 
-            VALUES (NULL,?, ?,'Ticket Reabierto',now(),'1');";
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $id_ticket);
             $sql->bindValue(2, $id_usuario);
@@ -194,21 +212,6 @@
             return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
         }
 
-         public function detalle_ticket_cerrado($id_ticket,$id_usuario,){
-            $conectar= parent::conexion();
-            parent::set_names();
-
-            $sql="call sp_insert_ticketDetalle01(?,?)";
-            $sql=$conectar->prepare($sql);
-            $sql->bindValue(1, $id_ticket);
-            $sql->bindValue(2, $id_usuario);
-           
-            $sql->execute();
-
-
-        
-            return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
-        }
          public function get_ticketTotal(){
         $conectar= parent::conexion();
             parent::set_names();

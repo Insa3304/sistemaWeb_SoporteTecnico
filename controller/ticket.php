@@ -51,7 +51,7 @@
 
         case "update":
         $ticket->actualizar_ticket($_POST["id_ticket"]);
-            $ticket->detalle_ticket_reabrir($_POST["id_ticket"],$_POST["id_usuario"]);
+            $ticket->detalle_ticket_cerrado($_POST["id_ticket"],$_POST["id_usuario"]);
         break;
 
          case "reabrir_ticket":
