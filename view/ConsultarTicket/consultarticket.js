@@ -97,10 +97,12 @@
         }
     });
 
-    function ver(id_ticket){
-        
-        window.open('http://localhost/UgelTicketsSoporte/view/DetalleTicket/?ID='+ id_ticket +''); //abre una nueva pestaña
-    }
+   
+
+    $(document).on("click",".btn-inline",function(){
+        const ciphertext = $(this).data("ciphertext");
+       window.open('http://localhost/UgelTicketsSoporte/view/DetalleTicket/?ID='+ ciphertext +''); //abre una nueva pestaña
+    })
 
     function asignar(id_ticket){
         $.post("../../controller/ticket.php?op=mostrar", {id_ticket : id_ticket}, function (data){

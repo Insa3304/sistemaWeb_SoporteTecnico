@@ -8,7 +8,9 @@
 
      require_once("../models/Documento.php");
     $documento = new Documento();
-
+     $key = "mi_key_secret";
+    $cipher = "aes-256-cbc";
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
 
     switch ($_GET["op"]) {
     case "insertar":
@@ -106,7 +108,9 @@
                 }
             }
             
-            $sub_array[] = '<button type="button" onClick="ver(' . $row["id_ticket"] . ');" id="' . $row["id_ticket"] . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
+             $cifrado = openssl_encrypt($row["id_ticket"], $cipher, $key, OPENSSL_RAW_DATA, $iv);
+              $textoCifrado = base64_encode($iv . $cifrado);
+            $sub_array[] = '<button type="button" data-ciphertext="' . $textoCifrado.'" id="' .  $textoCifrado . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
 
             $data[] = $sub_array;
         }
@@ -182,6 +186,8 @@
         $datos = $ticket->filtrar_ticket($_POST["titulo_ticket"],$_POST["id_categoria"],$_POST["id_prioridad"]);
         $data = array();
         foreach ($datos as $row) {
+
+           
             $sub_array = array();
             $sub_array[] = $row["id_ticket"];
             $sub_array[] = $row["nombre_categoria"];
@@ -216,9 +222,9 @@
                      $sub_array[] = '<span class="label label-pill label-success">'.$row1["usuario_nombre"] .'</span>';
                 }
             }
-
-
-            $sub_array[] = '<button type="button" onClick="ver(' . $row["id_ticket"] . ');" id="' . $row["id_ticket"] . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
+             $cifrado = openssl_encrypt($row["id_ticket"], $cipher, $key, OPENSSL_RAW_DATA, $iv);
+              $textoCifrado = base64_encode($iv . $cifrado);
+            $sub_array[] = '<button type="button" data-ciphertext="' . $textoCifrado.'" id="' .  $textoCifrado . '" class="btn btn-inline btn-primary btn-sm ladda-button"><i class="fa fa-eye"></i></button>';
             $data[] = $sub_array;
         }
 
@@ -233,7 +239,12 @@
 
 
         case "listardetalle":
-        $datos=$ticket-> listar_detalle_ticket($_POST["id_ticket"]);
+
+                $iv_dec = substr(base64_decode($_POST["id_ticket"]), 0, openssl_cipher_iv_length($cipher));
+                $cifradoSinIV = substr(base64_decode($_POST["id_ticket"]), openssl_cipher_iv_length($cipher));
+                $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+
+        $datos=$ticket-> listar_detalle_ticket($decifrado);
         ?>
         <?php
         foreach($datos as $row){
@@ -286,8 +297,13 @@
         break;
          case "mostrar":
 
-          
-            $datos=$ticket->listar_ticketporID($_POST["id_ticket"]);
+            
+                $iv_dec = substr(base64_decode($_POST["id_ticket"]), 0, openssl_cipher_iv_length($cipher));
+                $cifradoSinIV = substr(base64_decode($_POST["id_ticket"]), openssl_cipher_iv_length($cipher));
+                $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+            $datos=$ticket->listar_ticketporID( $decifrado);
+
+              
             if(is_array($datos)==true and count($datos)>0){
                 foreach($datos as $row)
                 {
@@ -318,8 +334,14 @@
 
 
              case "insertar_detalle":
+                $iv_dec = substr(base64_decode($_POST["id_ticket"]), 0, openssl_cipher_iv_length($cipher));
+            $cifradoSinIV = substr(base64_decode($_POST["id_ticket"]), openssl_cipher_iv_length($cipher));
+            $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+
+
+
         $ticket->insertar_ticketdetalle(
-            $_POST["id_ticket"],
+            $_POST["decifrado"],
             $_POST["id_usuario"],
             $_POST["detalle_descripcion_ticket"],
             

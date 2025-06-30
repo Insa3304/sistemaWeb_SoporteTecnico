@@ -1,6 +1,10 @@
 <?php
+
+
+
 class Usuario extends Conectar{
 
+    
     public function login(){
         $conectar=parent::conexion();
         parent::set_names();
@@ -14,28 +18,41 @@ class Usuario extends Conectar{
 
             } else{
             
-                $sql = "SELECT * FROM usuario WHERE usuario_correo = ? AND usuario_contraseña=? AND rol_id=? AND estado=1";
+                $sql = "SELECT * FROM usuario WHERE usuario_correo = ? AND rol_id=? AND estado=1";
                 $stmt=$conectar->prepare($sql);
                 $stmt->bindValue(1,$correo);
-                $stmt->bindValue(2,$contraseña);
-                $stmt->bindValue(3,$rol);
+                $stmt->bindValue(2,$rol);
                 $stmt-> execute();
                 $resultado = $stmt->fetch();
-                if(is_array($resultado) and count($resultado)>0){
+                if($resultado){
+                    $textoCifrado = $resultado["usuario_contraseña"];
 
-                    $_SESSION["id_usuario"]=$resultado["id_usuario"];
-                    $_SESSION["usuario_nombre"]=$resultado["usuario_nombre"];
-                    $_SESSION["usuario_apellido"]=$resultado["usuario_apellido"];
-                     $_SESSION["rol_id"]=$resultado["rol_id"];
+                     $key = "mi_key_secret";
+                        $cipher = "aes-256-cbc";
+                      
+                $iv_dec = substr(base64_decode( $textoCifrado), 0, openssl_cipher_iv_length($cipher));
+                $cifradoSinIV = substr(base64_decode( $textoCifrado), openssl_cipher_iv_length($cipher));
+                $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
 
-                    header("Location:".Conectar::ruta()."view/Home/");
-                    exit();
+                if($decifrado==$contraseña){
                     
-                }else{
-                    header("Location:".Conectar::ruta()."view/index.php?m=1");
-                    exit();
-
+    
+                        $_SESSION["id_usuario"]=$resultado["id_usuario"];
+                        $_SESSION["usuario_nombre"]=$resultado["usuario_nombre"];
+                        $_SESSION["usuario_apellido"]=$resultado["usuario_apellido"];
+                         $_SESSION["rol_id"]=$resultado["rol_id"];
+    
+                        header("Location:".Conectar::ruta()."view/Home/");
+                        exit();
+                        
+                    }else{
+                        header("Location:".Conectar::ruta()."view/index.php?m=1");
+                        exit();
+    
+                        
+                    }
                     
+                }
                 }
                 
                 
@@ -44,20 +61,26 @@ class Usuario extends Conectar{
 
             
         }
-    }
+    
 
     public function insertar_usuario($usuario_nombre,$usuario_apellido,$usuario_correo,$usuario_contraseña,$rol_id){
+
+        $key = "mi_key_secret";
+        $cipher = "aes-256-cbc";
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
+         $cifrado = openssl_encrypt($usuario_contraseña, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+          $textoCifrado= base64_encode($iv . $cifrado);
 
         $conectar= parent::conexion();
           $sql="INSERT INTO usuario (id_usuario,usuario_nombre, usuario_apellido, usuario_correo, usuario_contraseña, rol_id, fecha_creacion,
           fecha_modificacion, fecha_eliminacion, estado)
-        VALUES (null,?, ?, ?,MD5(?), ?, now(), null, null,'1');";
+        VALUES (null,?, ?, ?,?, ?, now(), null, null,'1');";
 
             $sql=$conectar->prepare($sql);
             $sql->bindValue(1, $usuario_nombre);
             $sql->bindValue(2, $usuario_apellido);
             $sql->bindValue(3, $usuario_correo);
-            $sql->bindValue(4, $usuario_contraseña);
+            $sql->bindValue(4,  $textoCifrado);
             $sql->bindValue(5, $rol_id);
            
             $sql->execute();
@@ -69,6 +92,13 @@ class Usuario extends Conectar{
 
     
     public function editar_usuario($id_usuario,$usuario_nombre,$usuario_apellido,$usuario_correo,$usuario_contraseña,$rol_id){
+
+        $key = "mi_key_secret";
+        $cipher = "aes-256-cbc";
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
+         $cifrado = openssl_encrypt($usuario_contraseña, $cipher, $key, OPENSSL_RAW_DATA, $iv);
+          $textoCifrado= base64_encode($iv . $cifrado);
+
          $conectar= parent::conexion();
             parent::set_names();
             $sql="UPDATE usuario set usuario_nombre=?,
@@ -83,7 +113,7 @@ class Usuario extends Conectar{
             $sql->bindValue(1, $usuario_nombre);
             $sql->bindValue(2, $usuario_apellido);
             $sql->bindValue(3, $usuario_correo);
-            $sql->bindValue(4, $usuario_contraseña);
+            $sql->bindValue(4,  $textoCifrado);
             $sql->bindValue(5, $rol_id);
             $sql->bindValue(6, $id_usuario);
             $sql->execute();

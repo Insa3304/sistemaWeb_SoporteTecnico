@@ -3,6 +3,10 @@
     require_once("../models/Usuario.php");
     $usuario = new Usuario();
 
+    
+        $key = "mi_key_secret";
+        $cipher = "aes-256-cbc";
+        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($cipher));
 
     switch($_GET["op"]){
         case "guardaryeditar":
@@ -61,7 +65,13 @@
             $output["usuario_nombre"] = $row["usuario_nombre"];
             $output["usuario_apellido"] = $row["usuario_apellido"];
             $output["usuario_correo"] = $row["usuario_correo"];
-            $output["usuario_contraseña"] = $row["usuario_contraseña"];
+
+                 $cipher = "aes-256-cbc";
+                $iv_dec = substr(base64_decode( $row["usuario_contraseña"]), 0, openssl_cipher_iv_length($cipher));
+                $cifradoSinIV = substr(base64_decode( $row["usuario_contraseña"]), openssl_cipher_iv_length($cipher));
+                $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+
+            $output["usuario_contraseña"] =  $decifrado;
             $output["rol_id"] = $row["rol_id"];
         }
         echo json_encode($output);
@@ -122,9 +132,13 @@
           break;
 
           case "cambiar_contraseña":
+
+             $cifrado = openssl_encrypt($_POST["usuario_contraseña"], $cipher, $key, OPENSSL_RAW_DATA, $iv);
+              $textoCifrado = base64_encode($iv . $cifrado);
+
              $usuario->actualizarClave_usuario(
-            $_POST["id_usuario"],$_POST["usuario_contraseña"]
-        ) ;
+            $_POST["id_usuario"],$textoCifrado);
+         ;
         break;
 
             
