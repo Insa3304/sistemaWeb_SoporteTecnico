@@ -51,10 +51,24 @@
         echo json_encode($datos);
         break;
 
-        case "update":
-        $ticket->actualizar_ticket($_POST["id_ticket"]);
-            $ticket->detalle_ticket_cerrado($_POST["id_ticket"],$_POST["id_usuario"]);
-        break;
+       case "update":
+    // Obtener el ID cifrado desde POST
+    $id_ticket_cifrado = $_POST["id_ticket"];
+
+    // Descifrado AES
+    $iv_dec = substr(base64_decode($id_ticket_cifrado), 0, openssl_cipher_iv_length($cipher));
+    $cifradoSinIV = substr(base64_decode($id_ticket_cifrado), openssl_cipher_iv_length($cipher));
+    $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+    // Verificamos si se descifró correctamente
+
+    // Actualizar el estado del ticket
+    $ticket->actualizar_ticket($decifrado);
+
+    // Registrar que el ticket fue cerrado por ese usuario
+    $ticket->detalle_ticket_cerrado($decifrado, $_POST["id_usuario"]);
+    echo $decifrado;
+    break;
+
 
          case "reabrir_ticket":
         $ticket->reabrir_ticket($_POST["id_ticket"]);
@@ -295,57 +309,68 @@
         <?php
 
         break;
-         case "mostrar":
+        case "mostrar":
 
-            
-                $iv_dec = substr(base64_decode($_POST["id_ticket"]), 0, openssl_cipher_iv_length($cipher));
-                $cifradoSinIV = substr(base64_decode($_POST["id_ticket"]), openssl_cipher_iv_length($cipher));
-                $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
-            $datos=$ticket->listar_ticketporID( $decifrado);
+    $id_ticket_recibido = $_POST["id_ticket"];
 
-              
-            if(is_array($datos)==true and count($datos)>0){
-                foreach($datos as $row)
-                {
-                    $output["id_ticket"] = $row["id_ticket"];
-                    $output["id_usuario"] = $row["id_usuario"];
-                    $output["id_categoria"] = $row["id_categoria"];
-                    $output["titulo_ticket"] = $row["titulo_ticket"];
-                    $output["descripcion_ticket"] = $row["descripcion_ticket"];
-                    if ($row["estado_ticket"]=="Abierto"){
-                        $output["estado_ticket"] = '<span class="label label-pill label-success">Abierto</span>';
-                    }else{
-                        $output["estado_ticket"] = '<span class="label label-pill label-danger">Cerrado</span>';
-                    }
-                  
+    // Si es numérico, úsalo sin descifrar
+    if (ctype_digit($id_ticket_recibido)) {
+        $decifrado = $id_ticket_recibido;
+    } else {
+        // Intentar descifrar
+        $decoded_base64 = base64_decode($id_ticket_recibido, true);
+        if ($decoded_base64 === false) {
+            die("ERROR: El ID no es Base64 y no es numérico.");
+        }
+        $iv_length = openssl_cipher_iv_length($cipher);
+        if (strlen($decoded_base64) < $iv_length) {
+            die("ERROR: El Base64 recibido es muy corto.");
+        }
 
-                     $output["estado_ticket_texto"] = $row["estado_ticket"];
-                     $output["fecha_TicketCreacion"] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
-                     $output["fecha_cierre"] = date("d/m/Y H:i:s", strtotime($row["fecha_cierre"]));
-                    $output["usuario_nombre"] = $row["usuario_nombre"];
-                    $output["usuario_apellido"] = $row["usuario_apellido"];
-                    $output["nombre_categoria"] = $row["nombre_categoria"];
-                    $output["nombre_prioridad"] = $row["nombre_prioridad"];
-                  
-                }
-                echo json_encode($output);
+        $iv_dec = substr($decoded_base64, 0, $iv_length);
+        $cifradoSinIV = substr($decoded_base64, $iv_length);
+        $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+        if ($decifrado === false) {
+            die("ERROR: No se pudo descifrar el ID.");
+        }
+    }
+
+    $datos = $ticket->listar_ticketporID($decifrado);
+
+    if (is_array($datos) && count($datos) > 0) {
+        foreach ($datos as $row) {
+            $output["id_ticket"] = $row["id_ticket"];
+            $output["id_usuario"] = $row["id_usuario"];
+            $output["id_categoria"] = $row["id_categoria"];
+            $output["titulo_ticket"] = $row["titulo_ticket"];
+            $output["descripcion_ticket"] = $row["descripcion_ticket"];
+            if ($row["estado_ticket"] == "Abierto") {
+                $output["estado_ticket"] = '<span class="label label-pill label-success">Abierto</span>';
+            } else {
+                $output["estado_ticket"] = '<span class="label label-pill label-danger">Cerrado</span>';
             }
-            break;
+
+            $output["estado_ticket_texto"] = $row["estado_ticket"];
+            $output["fecha_TicketCreacion"] = date("d/m/Y H:i:s", strtotime($row["fecha_TicketCreacion"]));
+            $output["fecha_cierre"] = date("d/m/Y H:i:s", strtotime($row["fecha_cierre"]));
+            $output["usuario_nombre"] = $row["usuario_nombre"];
+            $output["usuario_apellido"] = $row["usuario_apellido"];
+            $output["nombre_categoria"] = $row["nombre_categoria"];
+            $output["nombre_prioridad"] = $row["nombre_prioridad"];
+        }
+        echo json_encode($output);
+    }
+    break;
+
 
 
              case "insertar_detalle":
                 $iv_dec = substr(base64_decode($_POST["id_ticket"]), 0, openssl_cipher_iv_length($cipher));
             $cifradoSinIV = substr(base64_decode($_POST["id_ticket"]), openssl_cipher_iv_length($cipher));
             $decifrado = openssl_decrypt($cifradoSinIV, $cipher, $key, OPENSSL_RAW_DATA, $iv_dec);
+         
+             $datos=$ticket->insertar_ticketdetalle($decifrado,$_POST["id_usuario"],$_POST["detalle_descripcion_ticket"]);
 
-
-
-        $ticket->insertar_ticketdetalle(
-            $_POST["decifrado"],
-            $_POST["id_usuario"],
-            $_POST["detalle_descripcion_ticket"],
-            
-        );
         break;
 
          case "total":

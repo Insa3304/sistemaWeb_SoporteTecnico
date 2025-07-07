@@ -148,7 +148,7 @@
             $sql->bindValue(2, $id_usuario);
             $sql->bindValue(3, $detalle_descripcion_ticket);
             $sql->execute();
-
+            
 
         
             return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
@@ -188,9 +188,7 @@
           
            $sql->execute();
 
-
-       
-           return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
+           return $resultado=$sql->fetchAll;
        }
 
 
@@ -209,7 +207,7 @@
 
 
         
-            return $resultado=$sql1->fetchAll(pdo::FETCH_ASSOC);
+            return $resultado=$sql->fetchAll;
         }
 
          public function get_ticketTotal(){
